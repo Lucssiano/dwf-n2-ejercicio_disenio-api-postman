@@ -2,8 +2,11 @@
   "name": "api-postman",
   "version": "1.0.0",
   "description": "",
+  "main": "index.ts",
   "scripts": {
-    "dev": "nodemon --watch index.ts --exec ts-node index.ts"
+    "dev": "nodemon --watch index.ts --exec ts-node index.ts",
+    "build": "tsc index.ts",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,7 +17,9 @@
     "firebase-admin": "^12.0.0",
     "nodemon": "^3.1.0",
     "parcel": "^2.12.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

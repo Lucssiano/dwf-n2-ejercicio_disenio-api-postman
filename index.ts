@@ -1,6 +1,7 @@
 import express from 'express';
 import { firestoreDB } from './db';
 import cors from 'cors';
+import { v4 as uuidv4 } from 'uuid';
 
 const PORT = 3000;
 
@@ -10,25 +11,73 @@ app.use(cors());
 
 const postmanUsersCollection = firestoreDB.collection('postmanUsers');
 
-/* Fijarse si se le puede exigir que el body sea de cierta manera */
 app.post('/users', (req, res) => {
-	/* Ver de generar id aleatorio */
+	if (!req.body.name || !req.body.email) {
+		return res.json({ error: 'Faltan datos, el usuario debe tener un nombre y un email' });
+	}
+	const userId = uuidv4();
+	const userData = {
+		name: req.body.name,
+		email: req.body.email,
+		id: userId,
+	};
 	postmanUsersCollection
-		.doc(req.body.id)
-		.set(req.body)
-		.then(() => res.json({ id: req.body.id }));
+		.doc(userId)
+		.set(userData)
+		.then(() => res.json(userData))
+		.catch((err) => res.json(err));
 });
 
 app.get('/users', (req, res) => {
-	postmanUsersCollection.get().then((snapshot) => snapshot.forEach((doc) => res.json(doc.data())));
+	const users = [];
+	postmanUsersCollection
+		.get()
+		.then((snapshot) => {
+			snapshot.forEach((doc) => users.push(doc.data()));
+			res.json(users);
+		})
+		.catch((err) => res.json(err));
 });
 
 app.get('/users/:userId', (req, res) => {
 	const { userId } = req.params;
 	const userDoc = postmanUsersCollection.doc(userId);
-	userDoc.get().then((doc) => res.json(doc.data()));
+	userDoc
+		.get()
+		.then((doc) => {
+			if (!doc.exists) {
+				res.json({ error: 'No se encuentra el usuario' });
+			} else {
+				res.json(doc.data());
+			}
+		})
+		.catch((err) => res.json(err));
 });
 
-/* FALTA PUT Y DELETE */
+/* El método PUT se utiliza para actualizar un recurso en su totalidad. */
+/* El método PATCH se utiliza para realizar modificaciones parciales en un recurso. */
+app.patch('/users/:userId', (req, res) => {
+	const { userId } = req.params;
+	const userDoc = postmanUsersCollection.doc(userId);
+	userDoc
+		.update(req.body)
+		.then(() => {
+			res.json({ message: `Usuario ${userId} actualizado exitosamente!` });
+		})
+		.catch(() => {
+			res.json({ error: `No se pudo actualizar el usuario` });
+		});
+});
+
+app.delete('/users/:userId', (req, res) => {
+	const { userId } = req.params;
+	const userDoc = postmanUsersCollection.doc(userId);
+	userDoc
+		.delete()
+		.then(() => res.json({ message: `Usuario ${userId} eliminado exitosamente!` }))
+		.catch(() => {
+			res.json({ error: `No se pudo eliminar el usuario` });
+		});
+});
 
 app.listen(PORT, () => console.log(`-------- Server is running on port ${PORT} -------- `));
