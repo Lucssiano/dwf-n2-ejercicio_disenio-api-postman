@@ -1,10 +1,12 @@
 {
 	"compilerOptions": {
 		"module": "CommonJS",
-		"target": "ES2016",
+		"target": "ESNext",
 		"moduleResolution": "Node",
 		"resolveJsonModule": true,
 		"strictNullChecks": false,
 		"esModuleInterop": true
-	}
+	},
+	"files": ["./index.ts"],
+	"include": ["./**/*"]
 }
