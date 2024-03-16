@@ -1,2 +1,4 @@
 fbKey.json
 node_modules
+dev.ts
+.env

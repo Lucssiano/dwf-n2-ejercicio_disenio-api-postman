@@ -3,7 +3,7 @@ import { firestoreDB } from './db';
 import cors from 'cors';
 import { v4 as uuidv4 } from 'uuid';
 
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 const app = express();
 app.use(express.json());
