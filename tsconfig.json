@@ -6,6 +6,5 @@
 		"resolveJsonModule": true,
 		"strictNullChecks": false,
 		"esModuleInterop": true
-	},
-	"files": ["./index.ts"]
+	}
 }
